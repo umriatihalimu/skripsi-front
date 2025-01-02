@@ -11,3 +11,38 @@ body {
   padding: 0;
   box-sizing: border-box;
 }
+
+h1 {
+  font-weight: bold;
+  margin-left: 10px;
+  font-size: 1.875rem; /* text-3xl */
+  line-height: 2.25rem;
+}
+.btnTambah {
+  display: flex; /* Flex container */
+  align-items: center; /* Align items vertically */
+  background-color: #3b82f6; /* Warna latar biru (#3b82f6 adalah bg-blue-500) */
+  color: white; /* Warna teks putih */
+  padding: 0.25rem 0.25rem; /* Padding atas/bawah dan kiri/kanan (p-1 dan px-1) */
+  gap: 0.25rem; /* Jarak antar elemen dalam flex (gap-x-1) */
+  border-radius: 0.375rem; /* Border radius kecil (rounded-md) */
+  cursor: pointer; /* Pointer saat hover */
+  transition: filter 0.3s ease; /* Efek transisi untuk hover */
+}
+
+.btnTambah:hover {
+  filter: brightness(0.9); /* Redupkan warna saat hover */
+}
+
+.btnSimpan {
+  display: flex; /* Flex container */
+  align-items: center; /* Vertically align items */
+  background-color: #22c55e; /* Warna hijau (#22c55e adalah bg-green-500) */
+  color: white; /* Warna teks putih */
+  font-weight: 600; /* Teks semi-bold (font-semibold) */
+  padding: 0.5rem; /* Padding (p-2) */
+  border-radius: 0.375rem; /* Border radius kecil (rounded-md) */
+  gap: 0.25rem; /* Jarak horizontal antar elemen (gap-x-1) */
+  cursor: pointer; /* Pointer saat hover */
+  transition: background-color 0.3s ease; /* Transisi untuk hover */
+}

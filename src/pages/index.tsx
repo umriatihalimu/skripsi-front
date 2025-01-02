@@ -1,7 +1,14 @@
-import { Inter } from "next/font/google";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
-const inter = Inter({ subsets: ["latin"] });
+const Index = () => {
+  const router = useRouter();
+  useEffect(() => {
+    // redirect ke dashboard
+    router.replace("/dashboard");
+  }, [router]); //jalankan hanya jika routernya berubah
+  // tdk kembalikan apa apa di hal index
+  return null;
+};
 
-export default function Home() {
-  return <main className="font-bold"></main>;
-}
+export default Index;

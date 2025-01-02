@@ -1,7 +1,9 @@
+import Link from "next/link";
 import React from "react";
 
 type itemSidebarProps = {
   icon: React.ReactNode;
+  href: string;
   text: string;
   active?: boolean;
   alert?: boolean;
@@ -11,9 +13,9 @@ type SidebarProps = {
   isSidebarOpen: boolean;
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ children, isSidebarOpen }) => {
+const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   return (
-    <div className={`fixed w-64 items-center shadow-md`}>
+    <div className="fixed w-64 items-center">
       <div className="bg-[#3C8DBC] text-white flex justify-center gap-x-4 px-3 py-1.5 items-center">
         {/* svg */}
         <svg
@@ -40,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children, isSidebarOpen }) => {
       </div>
 
       <div className="bg-[#222d32] pt-28">
-        <ul className="">{children}</ul>
+        <ul>{children}</ul>
 
         <div className="flex justify-center">
           <button className="flex justify-center items-center mt-32  p-1 font-semibold uppercase bg-[#374950] text-white w-1/2 rounded-sm shadow-sm hover:bg-[#4E636B]">
@@ -54,17 +56,19 @@ const Sidebar: React.FC<SidebarProps> = ({ children, isSidebarOpen }) => {
 
 export default Sidebar;
 
-export function SidebarItem({ icon, text, active }: itemSidebarProps) {
+export function SidebarItem({ icon, text, active, href }: itemSidebarProps) {
   return (
     <li
-      className={`relative flex items-center pl-11 py-2 px-3  cursor-pointer text-white transition-colors  ${
+      className={`flex items-center pl-11 py-2 px-3  cursor-pointer text-white transition-colors  ${
         active ? "bg-[#374950]" : "hover:bg-[#4E636B] "
       }`}
     >
-      {icon}
-      <span className={`pl-3 cursor-pointer transition-colors ${active}`}>
-        {text}
-      </span>
+      <Link href={href} className="flex">
+        {icon}
+        <span className={`pl-3 cursor-pointer transition-colors ${active}`}>
+          {text}
+        </span>
+      </Link>
     </li>
   );
 }
