@@ -1,5 +1,7 @@
 import Link from "next/link";
 import React from "react";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
 
 type itemSidebarProps = {
   icon: React.ReactNode;
@@ -14,6 +16,7 @@ type SidebarProps = {
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
+  const router = useRouter();
   return (
     <div className="fixed w-64 items-center">
       <div className="bg-[#3C8DBC] text-white flex justify-center gap-x-4 px-3 py-1.5 items-center">
@@ -45,7 +48,14 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         <ul>{children}</ul>
 
         <div className="flex justify-center">
-          <button className="flex justify-center items-center mt-32  p-1 font-semibold uppercase bg-[#374950] text-white w-1/2 rounded-sm shadow-sm hover:bg-[#4E636B]">
+          <button
+            onClick={() => {
+              Cookies.remove("cobit_token");
+              localStorage.removeItem("token");
+              router.push("/login");
+            }}
+            className="flex justify-center items-center mt-20  p-1 font-semibold uppercase bg-[#374950] text-white w-1/2 rounded-sm shadow-sm hover:bg-[#4E636B]"
+          >
             Logout
           </button>
         </div>

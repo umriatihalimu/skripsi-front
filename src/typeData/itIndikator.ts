@@ -25,3 +25,22 @@ export type itIndikator = {
   tb_aspek: itAspek;
   id_aspek: number;
 };
+
+export type itPenguji = {
+  id_penguji: number;
+  nama_penguji: string;
+  jabatan: string;
+  keterangan: string;
+  tanggal_uji: string;
+};
+
+export type itJawabKuisioner = {
+  id_aspek: number;
+  id_domain: number;
+  id_indikator: number;
+  id_jawab_kuisioner: number;
+  id_penguji: number;
+  jawaban: string;
+  level: number;
+  soal: string;
+};

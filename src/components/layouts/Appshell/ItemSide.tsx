@@ -60,16 +60,10 @@ const Item: React.FC<ItemProps> = ({ isSidebarOpen }) => {
           active={menu === "cobit" && true}
         />
         <SidebarItem
-          href="/data-indikator"
-          icon={<CiDatabase size={22} />}
-          text="Data Indikator"
-          active={menu === "data-indikator" && true}
-        />
-        <SidebarItem href="#" icon={<TbReport size={22} />} text="Penilaian" />
-        <SidebarItem
-          href="#"
+          href="/penilaian"
           icon={<MdOutlineAssessment size={22} />}
           text="Laporan Penilaian"
+          active={menu === "penilaian" && true}
         />
         <SidebarItem
           href="#"

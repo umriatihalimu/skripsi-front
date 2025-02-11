@@ -1,3 +1,4 @@
+import axiosCostume from "@/axiosCostume";
 import { itDomain, itIndikator } from "@/typeData/itIndikator";
 import { url } from "@/util/env";
 import axios, { AxiosResponse } from "axios";
@@ -14,16 +15,18 @@ const Indikator = () => {
   const [filter, setFilter] = useState<number>(0);
 
   const loadData = () => {
-    axios.get(`${url}indikator/`).then((res: AxiosResponse<any, any>) => {
-      setDataIndikator(res.data);
-    });
-    axios.get(`${url}domain/`).then((res: AxiosResponse<any, any>) => {
+    axiosCostume
+      .get(`${url}indikator/`)
+      .then((res: AxiosResponse<any, any>) => {
+        setDataIndikator(res.data);
+      });
+    axiosCostume.get(`${url}domain/`).then((res: AxiosResponse<any, any>) => {
       setDomain(res.data);
     });
   };
 
   const _simpan = () => {
-    axios
+    axiosCostume
       .post(`${url}indikator/`, {
         indikator: indikator,
         nama_indikator: namaIndikator,

@@ -1,10 +1,18 @@
-import { data_kuisioner, itSoalKuesioner } from "@/components/data-kuisioner";
+import { itSoalKuesioner } from "@/components/data-kuisioner";
 import Kuisioner from "@/components/kuisioner";
-import { itAspek, itDomain, itIndikator } from "@/typeData/itIndikator";
+import Loading from "@/components/loading";
+import {
+  itAspek,
+  itDomain,
+  itIndikator,
+  itPenguji,
+} from "@/typeData/itIndikator";
 import { url } from "@/util/env";
-import axios, { AxiosResponse } from "axios";
+import axios, { Axios, AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa6";
+import $ from "jquery";
+import axiosCostume from "@/axiosCostume";
 
 const PilihDomain: React.FC = () => {
   const [pdomain, setPdomain] = useState(0);
@@ -33,9 +41,14 @@ const PilihDomain: React.FC = () => {
   const [jabatan, setJabatan] = useState<string>();
   const [keterangan, setKeterangan] = useState<string>();
   const [tanggal, setTanggal] = useState<string>();
+  const [penguji, setPenguji] = useState<itPenguji>();
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isFinish, setIsFinish] = useState<boolean>(false);
 
   const getKuisioner = (level: string, state: (data: any) => void) => {
-    axios
+    setIsLoading(true);
+    axiosCostume
       .post(`${url}indikator/get-kuisioner/`, {
         nama_domain: namaDomain,
         nama_aspek: namaAspek,
@@ -43,25 +56,30 @@ const PilihDomain: React.FC = () => {
         level: level,
       })
       .then((res: AxiosResponse<any, any>) => {
-        state(data_kuisioner);
+        state(res.data.data);
+        console.log(res.data.data);
+        setIsLoading(false);
       });
     if (Number(level) == 5) setBtn5(true);
   };
-
   const loadDomain = () => {
-    axios.get(`${url}domain/`).then((res: AxiosResponse<any, any>) => {
+    axiosCostume.get(`${url}domain/`).then((res: AxiosResponse<any, any>) => {
       setDomain(res.data);
     });
   };
   const getAspek = (id: number) => {
-    axios.get(`${url}aspek/${id}`).then((res: AxiosResponse<any, any>) => {
-      setAspek(res.data);
-    });
+    axiosCostume
+      .get(`${url}aspek/${id}`)
+      .then((res: AxiosResponse<any, any>) => {
+        setAspek(res.data);
+      });
   };
   const getIndikator = (id: number) => {
-    axios.get(`${url}indikator/${id}`).then((res: AxiosResponse<any, any>) => {
-      setIndikator(res.data);
-    });
+    axiosCostume
+      .get(`${url}indikator/${id}`)
+      .then((res: AxiosResponse<any, any>) => {
+        setIndikator(res.data);
+      });
   };
 
   const updateJawaban = (
@@ -92,24 +110,42 @@ const PilihDomain: React.FC = () => {
   };
 
   const kirim = (level: string, state: (data: any) => void) => {
-    axios
+    setIsLoading(true);
+    axiosCostume
       .post(`${url}indikator/jawab`, {
-        data: JSON.stringify(soalKuisioner),
+        data: JSON.stringify(
+          level == "1"
+            ? soalKuisioner
+            : level == "2"
+            ? soalKuisioner2
+            : level == "3"
+            ? soalKuisioner3
+            : level == "4"
+            ? soalKuisioner4
+            : level == "5"
+            ? soalKuisioner5
+            : ""
+        ),
         level: level,
         id_domain: pdomain,
         id_aspek: idAspek,
         id_indikator: idIndikator,
+        id_penguji: penguji?.id_penguji,
       })
       .then((res: AxiosResponse<any, any>) => {
-        const skor = res.data.skor;
-        if (skor >= 85) {
+        setIsLoading(false);
+        const skor = res.data.data.skor;
+        alert("skor = " + skor);
+        if (skor >= 75) {
           if (Number(level) + 1 < 6) {
             alert(`Lanjut ke level ${Number(level) + 1}`);
             getKuisioner(`${Number(level) + 1}`, state);
           }
         } else {
+          setIsFinish(true);
+
           alert(
-            "Karena skor tidak memenuhi batas minimal, maka tidak dapat  lanjut ke level berikutnya"
+            "Karena skor tidak memenuhi batas minimal, maka tidak dapat lanjut ke level berikutnya"
           );
         }
       });
@@ -124,6 +160,8 @@ const PilihDomain: React.FC = () => {
   }, []);
   return (
     <>
+      {isLoading && <Loading />}
+
       {!isDaftar ? (
         <>
           <h3 className="font-semibold">
@@ -133,7 +171,18 @@ const PilihDomain: React.FC = () => {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              setIsDaftar(true);
+
+              axiosCostume
+                .post(`${url}indikator/penguji/`, {
+                  nama_penguji: namaPenguji,
+                  jabatan: jabatan,
+                  keterangan: keterangan,
+                  tanggal_uji: tanggal,
+                })
+                .then((res: AxiosResponse<any, any>) => {
+                  setPenguji(res.data.data);
+                  setIsDaftar(true);
+                });
             }}
           >
             <label className="form-control w-full max-w-xs">
@@ -189,6 +238,31 @@ const PilihDomain: React.FC = () => {
       ) : (
         <>
           <div className="flex flex-col items-center justify-center">
+            <h2>Data Penguji</h2>
+            <table className="table">
+              <tbody>
+                <tr>
+                  <td>Nama </td>
+                  <td>: </td>
+                  <td>{penguji?.nama_penguji}</td>
+                </tr>
+                <tr>
+                  <td>Jabatan </td>
+                  <td>: </td>
+                  <td>{penguji?.jabatan}</td>
+                </tr>
+                <tr>
+                  <td>Tanggal </td>
+                  <td>: </td>
+                  <td>{penguji?.tanggal_uji}</td>
+                </tr>
+                <tr>
+                  <td>Keterangan </td>
+                  <td>: </td>
+                  <td>{penguji?.keterangan}</td>
+                </tr>
+              </tbody>
+            </table>
             <div className="flex flex-col gap-y-2 items-center justify-center">
               <p className="text-xl font-semibold">Silahkan pilih domain</p>
             </div>
@@ -230,9 +304,21 @@ const PilihDomain: React.FC = () => {
                       } hover:opacity-80 cursor-pointer flex rounded-sm text-white p-1 gap-x-2 items-center justify-center px-2 `}
                       key={i}
                       onClick={() => {
+                        setIdIndikator(undefined);
                         setIdAspek(data.id_aspek);
                         getIndikator(data.id_aspek);
                         setNamaAspek(data.aspek);
+                        setSoalKuisioner(undefined);
+                        setSoalKuisioner2(undefined);
+                        setSoalKuisioner3(undefined);
+                        setSoalKuisioner4(undefined);
+                        setSoalKuisioner5(undefined);
+                        setSoalKuisioner6(undefined);
+                        setBtn1(true);
+                        setBtn2(true);
+                        setBtn3(true);
+                        setBtn4(true);
+                        setBtn5(true);
                       }}
                     >
                       {data.aspek}
@@ -250,7 +336,7 @@ const PilihDomain: React.FC = () => {
                 <div className="flex flex-col justify-center items-center  w-full ms-20">
                   <ul className="flex flex-col gap-y-1 pt-4">
                     {indikator.map((data, i) => (
-                      <li key={i}>
+                      <li key={i} id={String(data.id_indikator)}>
                         <button
                           className={`flex gap-x-2 items-center hover:opacity-70 ${
                             data.id_indikator == idIndikator && "text-blue-700 "
@@ -258,6 +344,17 @@ const PilihDomain: React.FC = () => {
                           onClick={() => {
                             setIdIndikator(data.id_indikator);
                             setNamaIndikator(data.nama_indikator);
+                            setBtn1(true);
+                            setBtn2(true);
+                            setBtn3(true);
+                            setBtn4(true);
+                            setBtn5(true);
+                            setSoalKuisioner(undefined);
+                            setSoalKuisioner2(undefined);
+                            setSoalKuisioner3(undefined);
+                            setSoalKuisioner4(undefined);
+                            setSoalKuisioner5(undefined);
+                            setSoalKuisioner6(undefined);
                           }}
                         >
                           <FaCheck />
@@ -271,10 +368,13 @@ const PilihDomain: React.FC = () => {
             )}
 
             <br />
-            {domain.length > 0 && aspek.length > 0 && indikator.length > 0 ? (
+            {typeof idIndikator != "undefined" &&
+            domain.length > 0 &&
+            aspek.length > 0 &&
+            indikator.length > 0 ? (
               <button
                 onClick={() => getKuisioner("1", setSoalKuisioner)}
-                className="text-white font-semibold bg-red-500 rounded-md p-2 px-4 hover:bg-red-400"
+                className="text-white font-semibold bg-red-500 rounded-md p-2 px-4 hover:bg-red-400  "
               >
                 Kirim
               </button>
@@ -343,6 +443,34 @@ const PilihDomain: React.FC = () => {
             />
           )}
         </>
+      )}
+      {isFinish && (
+        <button
+          className="btnSimpan"
+          onClick={() => {
+            setIsFinish(false);
+            setSoalKuisioner(undefined);
+            setSoalKuisioner2(undefined);
+            setSoalKuisioner3(undefined);
+            setSoalKuisioner4(undefined);
+            setSoalKuisioner5(undefined);
+            setSoalKuisioner6(undefined);
+            setBtn1(false);
+            setBtn2(false);
+            setBtn3(false);
+            setBtn4(false);
+            setBtn5(false);
+            setIdIndikator(undefined);
+            $(`#${idIndikator}`).hide();
+            alert("Pilih indikator berikutnya");
+            window.scrollTo({
+              top: 200,
+              behavior: "smooth", // Memberikan animasi gulir yang halus
+            });
+          }}
+        >
+          Selesai
+        </button>
       )}
     </>
   );

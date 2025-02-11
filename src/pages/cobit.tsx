@@ -11,6 +11,7 @@ const Cobit = () => {
           {`HITUNG KEMATANGAN SISTEM PEMERINTAHAN BERBASIS ELEKTRONIK
             MENGGUNAKAN COBIT 5`}
         </h3>
+
         <img src="/img.jpg" alt="" style={{ width: "280px" }} />
         <p>Mulai hitung kematangan SPBE</p>
         <button

@@ -12,7 +12,7 @@ const Navbar: React.FC<ItemProps> = ({ isSidebarOpen, setSidebarOpen }) => {
     <nav
       className={`${
         isSidebarOpen ? "ml-64" : ""
-      }  bg-[#3C8DBC] text-white flex justify-between px-3 py-1  items-center`}
+      }  bg-[#3C8DBC] text-white flex justify-between px-3 py-1  items-center h-[53px]`}
     >
       {/* <Head>
         <title>Dashboard</title>
@@ -29,9 +29,8 @@ const Navbar: React.FC<ItemProps> = ({ isSidebarOpen, setSidebarOpen }) => {
       {/* Kanan: Bell dan User Icon */}
       <div className="flex ">
         <FiBell size={24} className="mr-4" />
-        <div className="mr-4">
-          <p>Nama</p>
-          <p className="text-[13px]">Admin</p>
+        <div className="mr-4 ">
+          <p>User</p>
         </div>
         <FaRegUserCircle size={24} />
       </div>

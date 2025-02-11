@@ -1,9 +1,10 @@
 import { itAspek, itDomain } from "@/typeData/itIndikator";
 import { MdOutlineDelete } from "react-icons/md";
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
 import { IoAdd } from "react-icons/io5";
 import { url } from "@/util/env";
+import axiosCostume from "@/axiosCostume";
 
 const Aspek = () => {
   const [isModalOpen, setModalOpen] = useState<boolean>(false);
@@ -15,11 +16,11 @@ const Aspek = () => {
   const [filter, setFilter] = useState<number>(0);
 
   const loadAspek = () => {
-    axios.get(`${url}aspek/`).then((res: AxiosResponse<any, any>) => {
+    axiosCostume.get(`${url}aspek/`).then((res: AxiosResponse<any, any>) => {
       setDataAspek(res.data);
       setDataAspek2(res.data);
     });
-    axios.get(`${url}domain/`).then((res: AxiosResponse<any, any>) => {
+    axiosCostume.get(`${url}domain/`).then((res: AxiosResponse<any, any>) => {
       setDataDomain(res.data);
     });
   };
@@ -28,7 +29,7 @@ const Aspek = () => {
   }, []);
 
   const _simpan = () => {
-    axios
+    axiosCostume
       .post(`${url}aspek/`, {
         id_domain: idDomain,
         aspek: aspek,
@@ -39,17 +40,22 @@ const Aspek = () => {
           loadAspek();
           setModalOpen(false);
         }
+      })
+      .catch((error: any) => {
+        alert("Data belum terisi");
       });
   };
 
   const hapus = (id: number) => {
     if (confirm("Apakah anda ingin menghapus data ini?")) {
     }
-    axios.delete(`${url}aspek/${id}`).then((res: AxiosResponse<any, any>) => {
-      if (res.data.status === "ok") {
-        loadAspek();
-      }
-    });
+    axiosCostume
+      .delete(`${url}aspek/${id}`)
+      .then((res: AxiosResponse<any, any>) => {
+        if (res.data.status === "ok") {
+          loadAspek();
+        }
+      });
   };
 
   return (

@@ -5,6 +5,7 @@ import axios, { AxiosResponse } from "axios";
 import EditData from "../components/EditData";
 import Modal from "@/components/Modal";
 import { itDomainSpbe, itKuisioner } from "@/typeData/itIndikator";
+import axiosCostume from "@/axiosCostume";
 
 const DataIndikatorPage = () => {
   const url = process.env.NEXT_PUBLIC_URL;
@@ -16,21 +17,25 @@ const DataIndikatorPage = () => {
 
   // ambil data
   const loadData = () => {
-    axios.get(url + "kuisioner").then((response: AxiosResponse<any, any>) => {
-      setData(response.data.data);
-    });
+    axiosCostume
+      .get(url + "kuisioner")
+      .then((response: AxiosResponse<any, any>) => {
+        setData(response.data.data);
+      });
   };
 
   const loadSpbe = () => {
-    axios.get(`${url}domain-spbe/`).then((res: AxiosResponse<any, any>) => {
-      setDataSpbe(res.data);
-    });
+    axiosCostume
+      .get(`${url}domain-spbe/`)
+      .then((res: AxiosResponse<any, any>) => {
+        setDataSpbe(res.data);
+      });
   };
 
   // hapus data
   const hapusData = (id: string) => {
     if (confirm("Apakah anda ingin hapus data ini?")) {
-      axios
+      axiosCostume
         .delete(url + "kuisioner/" + id)
         .then((response: AxiosResponse<any, any>) => {
           if (response.data.status == "ok") {
@@ -48,7 +53,7 @@ const DataIndikatorPage = () => {
 
   const _simpan = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    axios
+    axiosCostume
       .post(url + "kuisioner", {
         kuisioner: kuisioner,
       })

@@ -19,6 +19,12 @@ h1 {
   font-size: 1.875rem; /* text-3xl */
   line-height: 2.25rem;
 }
+
+h2 {
+  font-weight: bold;
+  font-size: large;
+  line-height: 2.25rem;
+}
 .btnTambah {
   display: flex; /* Flex container */
   align-items: center; /* Align items vertically */
@@ -46,4 +52,8 @@ h1 {
   gap: 0.25rem; /* Jarak horizontal antar elemen (gap-x-1) */
   cursor: pointer; /* Pointer saat hover */
   transition: background-color 0.3s ease; /* Transisi untuk hover */
+}
+
+.btnSimpan:hover {
+  filter: brightness(0.9); /* Redupkan warna saat hover */
 }

@@ -4,6 +4,7 @@ import axios, { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
 import { MdOutlineDelete } from "react-icons/md";
 import { IoAdd } from "react-icons/io5";
+import axiosCostume from "@/axiosCostume";
 
 const Domain = () => {
   const [data, setData] = useState<itDomain[]>([]);
@@ -11,7 +12,7 @@ const Domain = () => {
   const [add, setAdd] = useState(false);
 
   const loadDomain = () => {
-    axios.get(`${url}domain/`).then((res: AxiosResponse<any, any>) => {
+    axiosCostume.get(`${url}domain/`).then((res: AxiosResponse<any, any>) => {
       setData(res.data);
     });
   };
@@ -19,7 +20,7 @@ const Domain = () => {
   // hapus data
   const hapusDomain = (id: number) => {
     if (confirm("Apakah anda ingin hapus data ini?")) {
-      axios
+      axiosCostume
         .delete(url + "domain/" + id)
         .then((response: AxiosResponse<any, any>) => {
           if (response.data.status == "ok") {
@@ -29,7 +30,7 @@ const Domain = () => {
     }
   };
   const _simpan = () => {
-    axios
+    axiosCostume
       .post(`${url}domain/`, {
         domain: domain,
       })
@@ -39,6 +40,9 @@ const Domain = () => {
           loadDomain();
           setAdd(false);
         }
+      })
+      .catch((error: any) => {
+        alert("data belum terisi");
       });
   };
 
@@ -54,6 +58,7 @@ const Domain = () => {
           <p>Tambah data</p> <IoAdd size={24} />
         </button>
       </div>
+      <form action=""></form>
       <table className="table">
         {/* head */}
         <thead>
