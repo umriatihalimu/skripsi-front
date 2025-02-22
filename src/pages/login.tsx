@@ -31,7 +31,7 @@ const Login = () => {
     <>
       {/*  */}
       <div className="grid grid-cols-2 h-screen">
-        {/* kanan */}
+        {/* kiri */}
         <div className="bg-gradient-to-b from-blue-600 to-blue-400  h-screen items-center justify-center flex">
           <div className="flex  bg-white border items-center justify-center rounded-md h-[400px] w-[300px] shadow-sm">
             <p className="text-4xl font-bold text-center">
@@ -41,7 +41,7 @@ const Login = () => {
           </div>
         </div>
 
-        {/* kiri */}
+        {/* kanan */}
         <div className="flex items-center justify-center h-screen">
           <div className="flex flex-col p-3 gap-4 border items-center justify-center w-[500px]">
             <div className="flex gap-3">

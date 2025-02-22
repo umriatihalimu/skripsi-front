@@ -65,11 +65,6 @@ const Item: React.FC<ItemProps> = ({ isSidebarOpen }) => {
           text="Laporan Penilaian"
           active={menu === "penilaian" && true}
         />
-        <SidebarItem
-          href="#"
-          icon={<MdOutlineManageAccounts size={22} />}
-          text="Kelola Data User"
-        />
       </Sidebar>
     </div>
   );

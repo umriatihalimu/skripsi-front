@@ -119,7 +119,6 @@ const DashboardPage = () => {
                 </td>
               </tr>
             </tbody>
-            <th></th>
           </table>
         </div>
         <div className="flex flex-col gap-4 ">
@@ -181,7 +180,6 @@ const DashboardPage = () => {
                   <td>SPBE Optimum</td>
                 </tr>
               </tbody>
-              <th></th>
             </table>
           </div>
           Pada COBIT 5 ada beberapa domain yaitu :
@@ -228,7 +226,6 @@ const DashboardPage = () => {
                 </td>
               </tr>
             </tbody>
-            <th></th>
           </table>
         </div>
       </div>

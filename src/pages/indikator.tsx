@@ -56,7 +56,7 @@ const Indikator = () => {
   return (
     <>
       <div className="flex flex-col justify-between pb-3">
-        <h1>Indikator</h1>
+        <h1>Indikator SPBE</h1>
         <div className="justify-end flex">
           <button className="btnTambah" onClick={() => setAdd(!add)}>
             Tambah data <IoAdd size={24} />

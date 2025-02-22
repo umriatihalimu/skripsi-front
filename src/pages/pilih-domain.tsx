@@ -57,7 +57,7 @@ const PilihDomain: React.FC = () => {
       })
       .then((res: AxiosResponse<any, any>) => {
         state(res.data.data);
-        console.log(res.data.data);
+        //console.log(res.data.data);
         setIsLoading(false);
       });
     if (Number(level) == 5) setBtn5(true);

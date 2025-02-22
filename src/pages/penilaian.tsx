@@ -1,4 +1,5 @@
 import axiosCostume from "@/axiosCostume";
+import Chart from "@/components/chart";
 import { itJawabKuisioner, itPenguji } from "@/typeData/itIndikator";
 import { url } from "@/util/env";
 import axios, { AxiosResponse } from "axios";
@@ -24,6 +25,9 @@ const Penilaian = () => {
     <>
       <div>
         <div className="overflow-x-auto">
+          <Chart />
+          <br />
+          <br />
           <table className="table">
             {/* head */}
             <thead>

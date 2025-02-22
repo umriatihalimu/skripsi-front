@@ -1,5 +1,3 @@
-import { itIndikator, itJawabKuisioner } from "./itIndikator";
-
 export type itSkor = {
   id_skor: number;
   id_penguji: number;
