@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  console.log(router.pathname);
+  //console.log(router.pathname);
   if (String(router.pathname).includes("/login")) {
     return <Component {...pageProps} />;
   } else

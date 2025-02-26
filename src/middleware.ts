@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
 
   // Contoh: Redirect pengguna yang belum login
   const isLoggedIn = request.cookies.get("cobit_token"); // Cek cookie
-  console.log(isLoggedIn);
+  //console.log(isLoggedIn);
 
   if (!pathname.includes("login")) {
     if (typeof isLoggedIn == "undefined") {
