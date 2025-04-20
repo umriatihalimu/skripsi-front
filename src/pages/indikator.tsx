@@ -1,5 +1,5 @@
 import axiosCostume from "@/axiosCostume";
-import { itDomain, itIndikator } from "@/typeData/itIndikator";
+import { itAspek, itDomain, itIndikator } from "@/typeData/itIndikator";
 import { url } from "@/util/env";
 import axios, { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
@@ -11,7 +11,10 @@ const Indikator = () => {
   const [dataIndikator, setDataIndikator] = useState<itIndikator[]>([]);
   const [indikator, setIndikator] = useState<string>();
   const [namaIndikator, setNamaIndikator] = useState<string>();
+  const [idDomain, setIdDomain] = useState<string>("");
+  const [idAspek, setIdAspek] = useState<string>("");
   const [domain, setDomain] = useState<itDomain[]>([]);
+  const [aspek, setAspek] = useState<itAspek[]>([]);
   const [filter, setFilter] = useState<number>(0);
 
   const loadData = () => {
@@ -23,11 +26,17 @@ const Indikator = () => {
     axiosCostume.get(`${url}domain/`).then((res: AxiosResponse<any, any>) => {
       setDomain(res.data);
     });
+    axiosCostume.get(`${url}aspek/`).then((res: AxiosResponse<any, any>) => {
+      setAspek(res.data);
+      // console.log(res.data);
+    });
   };
 
   const _simpan = () => {
     axiosCostume
       .post(`${url}indikator/`, {
+        id_domain: Number(idDomain),
+        id_aspek: Number(idAspek),
         indikator: indikator,
         nama_indikator: namaIndikator,
       })
@@ -40,7 +49,7 @@ const Indikator = () => {
   };
 
   const hapus = (id: number) => {
-    axios
+    axiosCostume
       .delete(`${url}indikator/${id}`)
       .then((res: AxiosResponse<any, any>) => {
         if (res.data.status === "ok") {
@@ -55,7 +64,7 @@ const Indikator = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-between pb-3">
+      <div className="flex flex-col justify-between pb-3 w-full">
         <h1>Indikator SPBE</h1>
         <div className="justify-end flex">
           <button className="btnTambah" onClick={() => setAdd(!add)}>
@@ -85,13 +94,14 @@ const Indikator = () => {
             </button>
           ))}
         </div>
-        <table className="table ">
+        <table className="table w-full min-w-[800px]">
           {/* head */}
           <thead>
             <tr>
               <th>Indikator</th>
               <th>Nama Indikator</th>
               <th>Aspek</th>
+              <th>Domain</th>
               <th></th>
             </tr>
           </thead>
@@ -108,19 +118,37 @@ const Indikator = () => {
                     className="p-1 w-[90px] border border-gray-300 rounded"
                   />
                 </td>
+
                 <td>
                   <input
                     onChange={(e) => setNamaIndikator(e.target.value)}
                     placeholder="Masukkan nama indikator..."
                     autoFocus
                     type="text"
-                    className="p-1 border border-gray-300 rounded"
+                    className="p-1  border border-gray-300 rounded"
                   />
                 </td>
                 <td>
-                  <select className="p-1">
+                  <select
+                    className="p-1 max-w-[200px] "
+                    onChange={(e) => setIdAspek(e.target.value)}
+                  >
+                    {aspek.map((data, i) => (
+                      <option value={data.id_aspek} key={i}>
+                        {data.aspek}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td>
+                  <select
+                    className="p-1 max-w-[200px] "
+                    onChange={(e) => setIdDomain(e.target.value)}
+                  >
                     {domain.map((data, i) => (
-                      <option key={i}>{data.domain}</option>
+                      <option value={data.id_domain} key={i}>
+                        {data.domain}
+                      </option>
                     ))}
                   </select>
                 </td>
@@ -132,18 +160,27 @@ const Indikator = () => {
                 </td>
               </tr>
             )}
-            {dataIndikator.map((data, i) =>
-              filter == 0 ? (
+            {dataIndikator.map((data, i: any) => {
+              //console.log("data", data);
+              // if (!data.tb_aspek) {
+              //   console.warn("tb_aspek null untuk data:", data);
+              // }
+              console.log(data);
+
+              console.log({ idAspek, idDomain, indikator, namaIndikator });
+
+              return filter == 0 ? (
                 <tr key={i}>
                   <td>{data.indikator}</td>
                   <td> {data.nama_indikator}</td>
-                  <td>{data.tb_aspek.aspek}</td>
+                  <td>{data.tb_aspek?.aspek}</td>
+                  <td>{data.tb_aspek?.tb_domain?.domain}</td>
                   <td className="flex justify-end  ">
                     <button
                       onClick={() => hapus(data.id_indikator)}
                       className="flex items-center bg-red-500 rounded-md p-2 gap-x-1 justify-center text-white hover:bg-red-400"
                     >
-                      <MdOutlineDelete size={20} /> Hapus
+                      <MdOutlineDelete size={20} />
                     </button>
                   </td>
                 </tr>
@@ -152,19 +189,20 @@ const Indikator = () => {
                   <tr key={i}>
                     <td>{data.indikator}</td>
                     <td> {data.nama_indikator}</td>
-                    <td>{data.tb_aspek.aspek}</td>
-                    <td className="flex justify-end  ">
+                    <td>{data.tb_aspek?.aspek}</td>
+                    <td>{data.tb_aspek?.tb_domain?.domain}</td>
+                    <td className="flex justify-end">
                       <button
                         onClick={() => hapus(data.id_indikator)}
                         className="flex items-center bg-red-500 rounded-md p-2 gap-x-1 justify-center text-white hover:bg-red-400"
                       >
-                        <MdOutlineDelete size={20} /> Hapus
+                        <MdOutlineDelete size={20} />
                       </button>
                     </td>
                   </tr>
                 )
-              )
-            )}
+              );
+            })}
           </tbody>
         </table>
       </div>
