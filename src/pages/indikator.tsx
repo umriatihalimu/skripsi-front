@@ -2,11 +2,15 @@ import axiosCostume from "@/axiosCostume";
 import { itAspek, itDomain, itIndikator } from "@/typeData/itIndikator";
 import { url } from "@/util/env";
 import axios, { AxiosResponse } from "axios";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { IoIosAdd } from "react-icons/io";
 import { IoAdd } from "react-icons/io5";
 import { MdOutlineDelete } from "react-icons/md";
 
 const Indikator = () => {
+  const router = useRouter();
+
   const [add, setAdd] = useState<boolean>(false);
   const [dataIndikator, setDataIndikator] = useState<itIndikator[]>([]);
   const [indikator, setIndikator] = useState<string>();
@@ -44,6 +48,11 @@ const Indikator = () => {
         if (res.data.status === "ok") {
           loadData();
           setAdd(false);
+          alert("Data berhasil disimpan di localhost");
+          window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: "smooth",
+          });
         }
       });
   };
@@ -165,12 +174,24 @@ const Indikator = () => {
               // if (!data.tb_aspek) {
               //   console.warn("tb_aspek null untuk data:", data);
               // }
-              console.log(data);
+              // console.log(data);
 
-              console.log({ idAspek, idDomain, indikator, namaIndikator });
+              // console.log({ idAspek, idDomain, indikator, namaIndikator });
 
               return filter == 0 ? (
                 <tr key={i}>
+                  <td>
+                    <button
+                      onClick={() =>
+                        router.push(
+                          "/" + data.id_indikator + "/tambah-kuisioner"
+                        )
+                      }
+                      className="flex items-center bg-blue-400 rounded-md p-2 gap-x-1 justify-center text-white hover:bg-blue-300"
+                    >
+                      <IoIosAdd size={20} /> Tambah
+                    </button>
+                  </td>
                   <td>{data.indikator}</td>
                   <td> {data.nama_indikator}</td>
                   <td>{data.tb_aspek?.aspek}</td>
@@ -187,6 +208,18 @@ const Indikator = () => {
               ) : (
                 filter == data.tb_aspek.tb_domain.id_domain && (
                   <tr key={i}>
+                    <td>
+                      <button
+                        onClick={() =>
+                          router.push(
+                            "/" + data.id_indikator + "/tambah-kuisioner"
+                          )
+                        }
+                        className="flex items-center bg-blue-400 rounded-md p-2 gap-x-1 justify-center text-white hover:bg-blue-300"
+                      >
+                        <IoIosAdd size={20} /> Tambah
+                      </button>
+                    </td>
                     <td>{data.indikator}</td>
                     <td> {data.nama_indikator}</td>
                     <td>{data.tb_aspek?.aspek}</td>

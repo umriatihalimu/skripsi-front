@@ -6,6 +6,7 @@ import EditData from "../components/EditData";
 import Modal from "@/components/Modal";
 import { itDomainSpbe, itKuisioner } from "@/typeData/itIndikator";
 import axiosCostume from "@/axiosCostume";
+import { IoIosAdd } from "react-icons/io";
 
 const DataIndikatorPage = () => {
   const url = process.env.NEXT_PUBLIC_URL;

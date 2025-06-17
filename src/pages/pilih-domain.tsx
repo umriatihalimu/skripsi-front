@@ -89,7 +89,7 @@ const PilihDomain: React.FC = () => {
     state: (data: any) => void
   ) => {
     state((prevKuesioner: any) => {
-      if (!prevKuesioner) return prevKuesioner; // Tambahan untuk berjaga-jaga jika undefined
+      if (!prevKuesioner) return prevKuesioner; // Tambahan untuk berjaga-jaga jika undefined, maka jjgn ubah apa apa
 
       return {
         ...prevKuesioner,
@@ -114,7 +114,7 @@ const PilihDomain: React.FC = () => {
     axiosCostume
       .post(`${url}indikator/jawab`, {
         data: JSON.stringify(
-          level == "1"
+          level == "1" //jika lv 1 maka kirim soalkuisioner
             ? soalKuisioner
             : level == "2"
             ? soalKuisioner2
@@ -267,7 +267,7 @@ const PilihDomain: React.FC = () => {
               <p className="text-xl font-semibold">Silahkan pilih domain</p>
             </div>
             <div className="flex gap-x-2 justify-center pt-3">
-              {domain.map((data, i) => (
+              {domain.map((data, i) => ( //loop semua domain & buat tombolnya
                 <button
                   onClick={() => {
                     setPdomain(data.id_domain);
@@ -275,7 +275,7 @@ const PilihDomain: React.FC = () => {
                     setNamaDomain(data.domain);
                     setIndikator([]);
                     setAspek([]);
-                    setSoalKuisioner(undefined);
+                    setSoalKuisioner(undefined); //kosongkan  semua  kuisioner sebelumnjya 
                     setSoalKuisioner2(undefined);
                     setSoalKuisioner3(undefined);
                     setSoalKuisioner4(undefined);
