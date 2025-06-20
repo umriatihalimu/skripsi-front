@@ -1,479 +1,415 @@
-import { itSoalKuesioner } from "@/components/data-kuisioner";
-import Kuisioner from "@/components/kuisioner";
-import Loading from "@/components/loading";
-import {
-  itAspek,
-  itDomain,
-  itIndikator,
-  itPenguji,
-} from "@/typeData/itIndikator";
-import { url } from "@/util/env";
-import axios, { Axios, AxiosResponse } from "axios";
-import React, { useEffect, useState } from "react";
-import { FaCheck } from "react-icons/fa6";
-import $ from "jquery";
 import axiosCostume from "@/axiosCostume";
+import { itAspek, itDomain, itIndikator } from "@/typeData/itIndikator";
+import { itPertanyaan } from "@/typeData/itPertanyaan";
+import { url } from "@/util/env";
+import { AxiosResponse } from "axios";
+import { FormEvent, useEffect, useState } from "react";
 
-const PilihDomain: React.FC = () => {
-  const [pdomain, setPdomain] = useState(0);
-  const [idAspek, setIdAspek] = useState(0);
+const PilihDomain = () => {
   const [domain, setDomain] = useState<itDomain[]>([]);
+  const [selectDomain, setSelectDomain] = useState<number | null>(null);
   const [aspek, setAspek] = useState<itAspek[]>([]);
+  const [selectAspek, setSelectAspek] = useState<number | null>(null);
   const [indikator, setIndikator] = useState<itIndikator[]>([]);
-  const [idIndikator, setIdIndikator] = useState<number>();
-  const [namaDomain, setNamaDomain] = useState<string>();
-  const [namaAspek, setNamaAspek] = useState<string>();
-  const [namaIndikator, setNamaIndikator] = useState<string>();
-  const [soalKuisioner, setSoalKuisioner] = useState<itSoalKuesioner>();
-  const [soalKuisioner2, setSoalKuisioner2] = useState<itSoalKuesioner>();
-  const [soalKuisioner3, setSoalKuisioner3] = useState<itSoalKuesioner>();
-  const [soalKuisioner4, setSoalKuisioner4] = useState<itSoalKuesioner>();
-  const [soalKuisioner5, setSoalKuisioner5] = useState<itSoalKuesioner>();
-  const [soalKuisioner6, setSoalKuisioner6] = useState<itSoalKuesioner>();
-  const [btn1, setBtn1] = useState<boolean>(true);
-  const [btn2, setBtn2] = useState<boolean>(true);
-  const [btn3, setBtn3] = useState<boolean>(true);
-  const [btn4, setBtn4] = useState<boolean>(true);
-  const [btn5, setBtn5] = useState<boolean>(true);
+  const [selectIndikator, setSelectIndikator] = useState<number | null>(null);
+  const [level, setLevel] = useState<number>(1);
+  const [pertanyaan, setPertanyaan] = useState<itPertanyaan[]>([]);
+  const [jmlJawaban, setJmlJawaban] = useState<number>(0);
+  const [indikatorTerjawab, setIndikatorTerjawab] = useState<number[]>([]);
+  const [namaPenguji, setNamaPenguji] = useState<string>("");
+  const [jabatan, setJabatan] = useState<string>("");
+  const [keterangan, setKeterangan] = useState<string>("");
+  const [tglUji, setTglUji] = useState<string>("");
+  const [namaPengujiLocal, setNamaPengujiLocal] = useState<string>("");
+  const [jabatanLocal, setJabatanLocal] = useState<string>("");
+  const [keteranganLocal, setKeteranganLocal] = useState<string>("");
+  const [tglUjiLocal, setTglUjiLocal] = useState<string>("");
 
-  const [isDaftar, setIsDaftar] = useState<boolean>(false);
-  const [namaPenguji, setNamaPenguji] = useState<string>();
-  const [jabatan, setJabatan] = useState<string>();
-  const [keterangan, setKeterangan] = useState<string>();
-  const [tanggal, setTanggal] = useState<string>();
-  const [penguji, setPenguji] = useState<itPenguji>();
+  const [isSimpanForm, setSimpanForm] = useState<boolean>(false);
+  const [isReload, setReload] = useState<number>(1);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isFinish, setIsFinish] = useState<boolean>(false);
-
-  const getKuisioner = (level: string, state: (data: any) => void) => {
-    setIsLoading(true);
-    axiosCostume
-      .post(`${url}indikator/get-kuisioner/`, {
-        nama_domain: namaDomain,
-        nama_aspek: namaAspek,
-        nama_indikator: namaIndikator,
-        level: level,
-      })
-      .then((res: AxiosResponse<any, any>) => {
-        state(res.data.data);
-        //console.log(res.data.data);
-        setIsLoading(false);
-      });
-    if (Number(level) == 5) setBtn5(true);
-  };
-  const loadDomain = () => {
-    axiosCostume.get(`${url}domain/`).then((res: AxiosResponse<any, any>) => {
+  const _getDomain = () => {
+    axiosCostume.get(url + "domain").then((res) => {
       setDomain(res.data);
     });
   };
-  const getAspek = (id: number) => {
-    axiosCostume
-      .get(`${url}aspek/${id}`)
-      .then((res: AxiosResponse<any, any>) => {
-        setAspek(res.data);
-      });
-  };
-  const getIndikator = (id: number) => {
-    axiosCostume
-      .get(`${url}indikator/${id}`)
-      .then((res: AxiosResponse<any, any>) => {
-        setIndikator(res.data);
-      });
-  };
 
-  const updateJawaban = (
-    indikatorId: string,
-    pertanyaanId: string,
-    jawabanBaru: string,
-    state: (data: any) => void
-  ) => {
-    state((prevKuesioner: any) => {
-      if (!prevKuesioner) return prevKuesioner; // Tambahan untuk berjaga-jaga jika undefined, maka jjgn ubah apa apa
-
-      return {
-        ...prevKuesioner,
-        indikator: prevKuesioner.indikator.map((indikator: any) =>
-          indikator.id === indikatorId
-            ? {
-                ...indikator,
-                pertanyaan: indikator.pertanyaan.map((pertanyaan: any) =>
-                  pertanyaan.id === pertanyaanId
-                    ? { ...pertanyaan, jawaban: jawabanBaru }
-                    : pertanyaan
-                ),
-              }
-            : indikator
-        ),
-      };
+  const _getAspek = (id_domain: number) => {
+    axiosCostume.get(url + "aspek/" + id_domain).then((res) => {
+      setAspek(res.data);
     });
   };
 
-  const kirim = (level: string, state: (data: any) => void) => {
-    setIsLoading(true);
-    axiosCostume
-      .post(`${url}indikator/jawab`, {
-        data: JSON.stringify(
-          level == "1" //jika lv 1 maka kirim soalkuisioner
-            ? soalKuisioner
-            : level == "2"
-            ? soalKuisioner2
-            : level == "3"
-            ? soalKuisioner3
-            : level == "4"
-            ? soalKuisioner4
-            : level == "5"
-            ? soalKuisioner5
-            : ""
-        ),
-        level: level,
-        id_domain: pdomain,
-        id_aspek: idAspek,
-        id_indikator: idIndikator,
-        id_penguji: penguji?.id_penguji,
-      })
-      .then((res: AxiosResponse<any, any>) => {
-        setIsLoading(false);
-        const skor = res.data.data.skor;
-        alert("skor = " + skor);
-        if (skor >= 75) {
-          if (Number(level) + 1 < 6) {
-            alert(`Lanjut ke level ${Number(level) + 1}`);
-            getKuisioner(`${Number(level) + 1}`, state);
-          }
-        } else {
-          setIsFinish(true);
+  const _getIndikator = (id_aspek: number) => {
+    axiosCostume.get(url + "indikator/" + id_aspek).then((res) => {
+      setIndikator(res.data);
+    });
+  };
 
+  const _getPertanyaan = (id_indikator: number) => {
+    console.log(`panggil getpertanyaan level`, level);
+
+    axiosCostume
+      .get(url + `pertanyaan?level=${level}&id_indikator=${id_indikator}`)
+      .then((res: AxiosResponse) => {
+        setPertanyaan(res.data.data);
+        if (res.data.data.length == 0) {
+          if (selectIndikator) {
+            setIndikatorTerjawab((c) => [...c, selectIndikator]);
+          }
+        }
+      });
+  };
+
+  const _handleJawabanChange = (id: number, newJawaban: string) => {
+    setPertanyaan((prev) =>
+      prev.map((q) =>
+        q.id_kuisioner === id ? { ...q, jawaban: newJawaban } : q
+      )
+    );
+  };
+
+  const kirimJawaban = () => {
+    axiosCostume
+      .post(url + `pertanyaan?level=${level}`, {
+        data: pertanyaan,
+        id_penguji: localStorage.getItem("idPenguji"),
+        id_domain: selectDomain,
+        id_aspek: selectAspek,
+      })
+      .then((res) => {
+        alert(`Nilai indikator = ${res.data.hasil}`);
+        if (res.data.hasil > 85) {
+          setLevel((prev) => prev + 1);
           alert(
-            "Karena skor tidak memenuhi batas minimal, maka tidak dapat lanjut ke level berikutnya"
+            `Karena nilai lebih dari 85, maka lanjut ke level ${level + 1}`
           );
+        } else {
+          if (selectIndikator) {
+            setIndikatorTerjawab((c) => [...c, selectIndikator]);
+          }
+          alert(
+            `Karena nilai kurang dari 85, maka tidak dapat lanjut ke level berikutnya. Silahkan pilih indikator berikutnya`
+          );
+          setLevel(1);
+          setPertanyaan([]);
         }
       });
   };
 
   useEffect(() => {
-    console.log(JSON.stringify(soalKuisioner));
-  }, [soalKuisioner]);
+    if (selectIndikator) {
+      _getPertanyaan(selectIndikator);
+    }
+  }, [level]);
+
+  const _hitungJmlJawaban = () => {
+    var jmlJawab = 0;
+    pertanyaan.forEach((soal) => {
+      if (soal.jawaban != "") {
+        jmlJawab++;
+      }
+    });
+    setJmlJawaban(jmlJawab);
+  };
+
+  const _simpanDataUji = (e: FormEvent) => {
+    e.preventDefault();
+
+    axiosCostume
+      .post(url + "pertanyaan/simpan-data-penguji", {
+        nama_penguji: namaPenguji,
+        jabatan: jabatan,
+        keterangan: keterangan,
+        tanggal_uji: tglUji,
+      })
+      .then((res) => {
+        setSimpanForm(true);
+        localStorage.setItem("idPenguji", res.data.data.id_penguji);
+        localStorage.setItem("nama_penguji", namaPenguji);
+        localStorage.setItem("jabatan", jabatan);
+        localStorage.setItem("keterangan", keterangan);
+        localStorage.setItem("tanggal_uji", tglUji);
+        //console.log(res.data.data);
+      });
+  };
 
   useEffect(() => {
-    loadDomain();
-  }, []);
+    if (indikator.length > 0 && indikatorTerjawab.length === indikator.length) {
+      alert("Pindah ke aspek selanjutnya");
+      // Di sini kamu bisa juga trigger fungsi untuk load aspek baru
+    }
+  }, [indikatorTerjawab]);
+
+  useEffect(() => {
+    _hitungJmlJawaban();
+  }, [pertanyaan]);
+
+  useEffect(() => {
+    if (localStorage.getItem("nama_penguji") !== null) {
+      setNamaPengujiLocal(localStorage.getItem("nama_penguji") || "");
+      setJabatanLocal(localStorage.getItem("jabatan") || "");
+      setKeteranganLocal(localStorage.getItem("keterangan") || "");
+      setTglUjiLocal(localStorage.getItem("tanggal_uji") || "");
+      setSimpanForm(true);
+    }
+
+    _getDomain();
+  }, [isReload]);
   return (
     <>
-      {isLoading && <Loading />}
+      <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-lg space-y-4">
+        {namaPengujiLocal !== "" ? (
+          <div className="p-4">
+            <h2 className="text-center text-xl font-bold mb-4">
+              Terima Kasih Telah Mengisi Data
+            </h2>
 
-      {!isDaftar ? (
-        <>
-          <h3 className="font-semibold">
-            Lengkapi terlebih dahulu form dibawah ini
-          </h3>
-          <br />
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-
-              axiosCostume
-                .post(`${url}indikator/penguji/`, {
-                  nama_penguji: namaPenguji,
-                  jabatan: jabatan,
-                  keterangan: keterangan,
-                  tanggal_uji: tanggal,
-                })
-                .then((res: AxiosResponse<any, any>) => {
-                  setPenguji(res.data.data);
-                  setIsDaftar(true);
-                });
-            }}
-          >
-            <label className="form-control w-full max-w-xs">
-              <div className="label">
-                <span className="label-text">Masukkan nama anda</span>
-              </div>
-              <input
-                required
-                type="text"
-                placeholder="ex: umriati"
-                className="input input-bordered w-full max-w-xs"
-                onChange={(e) => setNamaPenguji(e.target.value)}
-              />
-            </label>
-            <label className="form-control w-full max-w-xs">
-              <div className="label">
-                <span className="label-text">Masukkan jabatan anda</span>
-              </div>
-              <input
-                required
-                type="text"
-                placeholder="ex: kepala dinas"
-                className="input input-bordered w-full max-w-xs"
-                onChange={(e) => setJabatan(e.target.value)}
-              />
-            </label>
-            <label className="form-control w-full max-w-xs">
-              <div className="label">
-                <span className="label-text">Masukkan tanggal</span>
-              </div>
-              <input
-                required
-                type="date"
-                className="input input-bordered w-full max-w-xs"
-                onChange={(e) => setTanggal(e.target.value)}
-              />
-            </label>
-            <label className="form-control w-full max-w-xs">
-              <div className="label">
-                <span className="label-text">Keterangan</span>
-              </div>
-              <input
-                required
-                type="text"
-                className="input input-bordered w-full max-w-xs"
-                onChange={(e) => setKeterangan(e.target.value)}
-              />
-            </label>
-            <br />
-            <button className="btnSimpan">Simpan</button>
-          </form>
-        </>
-      ) : (
-        <>
-          <div className="flex flex-col items-center justify-center">
-            <h2>Data Penguji</h2>
-            <table className="table">
+            <table className="table-auto border border-gray-300 w-full text-sm">
               <tbody>
-                <tr>
-                  <td>Nama </td>
-                  <td>: </td>
-                  <td>{penguji?.nama_penguji}</td>
+                <tr className="border-b">
+                  <td className="px-4 py-2 font-semibold">Nama Penguji:</td>
+                  <td className="px-4 py-2">{namaPengujiLocal}</td>
                 </tr>
                 <tr>
-                  <td>Jabatan </td>
-                  <td>: </td>
-                  <td>{penguji?.jabatan}</td>
+                  <td className="px-4 py-2 font-semibold">Jabatan:</td>
+                  <td className="px-4 py-2">{jabatanLocal}</td>
                 </tr>
                 <tr>
-                  <td>Tanggal </td>
-                  <td>: </td>
-                  <td>{penguji?.tanggal_uji}</td>
+                  <td className="px-4 py-2 font-semibold">Keterangan:</td>
+                  <td className="px-4 py-2">{keteranganLocal}</td>
                 </tr>
                 <tr>
-                  <td>Keterangan </td>
-                  <td>: </td>
-                  <td>{penguji?.keterangan}</td>
+                  <td className="px-4 py-2 font-semibold">
+                    Tanggal Pengujian:
+                  </td>
+                  <td className="px-4 py-2">{tglUjiLocal}</td>
                 </tr>
               </tbody>
             </table>
-            <div className="flex flex-col gap-y-2 items-center justify-center">
-              <p className="text-xl font-semibold">Silahkan pilih domain</p>
+            <div className="flex flex-col  pt-3 gap-2 items-center justify-center">
+              <h3>Tambah data baru</h3>
+              <button
+                className="btnTambah"
+                onClick={() => {
+                  localStorage.removeItem("nama_penguji");
+                  localStorage.removeItem("jabatan");
+                  localStorage.removeItem("keterangan");
+                  localStorage.removeItem("tanggal_uji");
+                  setNamaPengujiLocal("");
+                  setJabatanLocal("");
+                  setKeteranganLocal("");
+                  setTglUjiLocal("");
+                  setReload(new Date().getDate());
+                }}
+              >
+                Tambah
+              </button>
             </div>
-            <div className="flex gap-x-2 justify-center pt-3">
-              {domain.map((data, i) => ( //loop semua domain & buat tombolnya
-                <button
-                  onClick={() => {
-                    setPdomain(data.id_domain);
-                    getAspek(data.id_domain);
-                    setNamaDomain(data.domain);
-                    setIndikator([]);
-                    setAspek([]);
-                    setSoalKuisioner(undefined); //kosongkan  semua  kuisioner sebelumnjya 
-                    setSoalKuisioner2(undefined);
-                    setSoalKuisioner3(undefined);
-                    setSoalKuisioner4(undefined);
-                    setSoalKuisioner5(undefined);
-                  }}
-                  className={`${
-                    pdomain == data.id_domain ? "bg-red-500" : "bg-blue-700 "
-                  } hover:opacity-80 rounded-sm p-2 gap-x-1 justify-center text-white flex items-center `}
-                  key={i}
-                >
-                  {data.domain}
-                </button>
-              ))}
-            </div>
-            {pdomain > 0 && (
-              <>
-                <p className="font-semibold text-xl mt-8 mb-4">
-                  Silahkan pilih aspek
-                </p>
+          </div>
+        ) : (
+          <>
+            <h2>Silahkan Isi Data Pengujian</h2>
+            <form onSubmit={_simpanDataUji} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Nama Penguji
+                </label>
+                <input
+                  type="text"
+                  placeholder="cth. Umriati"
+                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setNamaPenguji(e.target.value)}
+                />
+              </div>
 
-                <ul className="flex gap-2 rounded-md ">
-                  {aspek.map((data, i) => (
-                    <li
-                      className={`${
-                        data.id_aspek == idAspek ? "bg-red-500" : "bg-blue-700 "
-                      } hover:opacity-80 cursor-pointer flex rounded-sm text-white p-1 gap-x-2 items-center justify-center px-2 `}
-                      key={i}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Jabatan
+                </label>
+                <input
+                  type="text"
+                  placeholder="cth. Kepala Divisi"
+                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setJabatan(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Keterangan
+                </label>
+                <input
+                  type="text"
+                  placeholder="cth. Pengujian 2025"
+                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setKeterangan(e.target.value)}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Tanggal Pengujian
+                </label>
+                <input
+                  type="date"
+                  className="mt-1 w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  onChange={(e) => setTglUji(e.target.value)}
+                />
+              </div>
+
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition"
+                >
+                  Simpan
+                </button>
+              </div>
+            </form>
+          </>
+        )}
+      </div>
+      {isSimpanForm == true && namaPengujiLocal !== "" && (
+        <div className="flex flex-col justify-center items-center gap-3">
+          <h2>Pilih Domain</h2>
+
+          <div className="flex flex-wrap gap-2">
+            {domain.map((dataDom, i) => (
+              <div key={i} className="">
+                <button
+                  className="btnTambah"
+                  style={{
+                    ...(dataDom.id_domain == selectDomain && {
+                      background: "#ff543c",
+                    }),
+                  }}
+                  onClick={() => {
+                    setSelectDomain(dataDom.id_domain);
+                    _getAspek(dataDom.id_domain);
+                  }}
+                >
+                  {dataDom.domain}
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {aspek.length > 0 && (
+            <>
+              <h2>Pilih Aspek</h2>
+
+              <div className="flex flex-wrap gap-2">
+                {aspek.map((dataAsp, i) => (
+                  <div key={i} className="">
+                    <button
+                      className="btnTambah"
+                      style={{
+                        ...(dataAsp.id_aspek == selectAspek && {
+                          background: "#ff543c",
+                        }),
+                      }}
                       onClick={() => {
-                        setIdIndikator(undefined);
-                        setIdAspek(data.id_aspek);
-                        getIndikator(data.id_aspek);
-                        setNamaAspek(data.aspek);
-                        setSoalKuisioner(undefined);
-                        setSoalKuisioner2(undefined);
-                        setSoalKuisioner3(undefined);
-                        setSoalKuisioner4(undefined);
-                        setSoalKuisioner5(undefined);
-                        setSoalKuisioner6(undefined);
-                        setBtn1(true);
-                        setBtn2(true);
-                        setBtn3(true);
-                        setBtn4(true);
-                        setBtn5(true);
+                        setSelectAspek(dataAsp.id_aspek);
+                        _getIndikator(dataAsp.id_aspek);
+
+                        setIndikatorTerjawab([]);
                       }}
                     >
-                      {data.aspek}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
+                      {dataAsp.aspek}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
 
-            {idAspek > 0 && (
-              <>
-                <p className="font-semibold text-xl mt-6">
-                  Silahkan pilih indikator
-                </p>
-                <div className="flex flex-col justify-center items-center  w-full ms-20">
-                  <ul className="flex flex-col gap-y-1 pt-4">
-                    {indikator.map((data, i) => (
-                      <li key={i} id={String(data.id_indikator)}>
+          {
+            <>
+              <h2>Pilih Indikator</h2>
+
+              <div className="flex flex-col gap-2">
+                {indikator.map((dataInd, i) => (
+                  <div key={i} className="">
+                    <button
+                      className=""
+                      style={{
+                        ...(dataInd.id_indikator == selectIndikator && {
+                          color: "red",
+                        }),
+                      }}
+                      onClick={() => {
+                        setSelectIndikator(dataInd.id_indikator);
+                        _getPertanyaan(dataInd.id_indikator);
+                      }}
+                    >
+                      {dataInd.nama_indikator}
+                      **
+                      {indikatorTerjawab.includes(dataInd.id_indikator) &&
+                        "Sudah Terjawab"}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </>
+          }
+
+          {pertanyaan.length > 0 && (
+            <>
+              <div className="flex items-center gap-2 mt-5 mb-3">
+                <p className="font-bold">Assessment Level : {level}</p>
+              </div>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>No</th>
+                    <th>Pertanyaan</th>
+                    <th>Jawaban</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {pertanyaan.map((data, i) => (
+                    <tr key={i}>
+                      <td>{i + 1}</td>
+                      <td>{data.kuisioner}</td>
+                      <td className="flex flex-row gap-2">
                         <button
-                          className={`flex gap-x-2 items-center hover:opacity-70 ${
-                            data.id_indikator == idIndikator && "text-blue-700 "
-                          } `}
-                          onClick={() => {
-                            setIdIndikator(data.id_indikator);
-                            setNamaIndikator(data.nama_indikator);
-                            setBtn1(true);
-                            setBtn2(true);
-                            setBtn3(true);
-                            setBtn4(true);
-                            setBtn5(true);
-                            setSoalKuisioner(undefined);
-                            setSoalKuisioner2(undefined);
-                            setSoalKuisioner3(undefined);
-                            setSoalKuisioner4(undefined);
-                            setSoalKuisioner5(undefined);
-                            setSoalKuisioner6(undefined);
+                          className="btnSimpan"
+                          style={{
+                            opacity: data.jawaban == "Ya" ? 1 : 0.5,
                           }}
+                          onClick={() =>
+                            _handleJawabanChange(data.id_kuisioner, "Ya")
+                          }
                         >
-                          <FaCheck />
-                          {data.nama_indikator}
+                          Ya
                         </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </>
-            )}
-
-            <br />
-            {typeof idIndikator != "undefined" &&
-            domain.length > 0 &&
-            aspek.length > 0 &&
-            indikator.length > 0 ? (
-              <button
-                onClick={() => getKuisioner("1", setSoalKuisioner)}
-                className="text-white font-semibold bg-red-500 rounded-md p-2 px-4 hover:bg-red-400  "
-              >
-                Kirim
-              </button>
-            ) : (
-              <></>
-            )}
-          </div>
-          {soalKuisioner && (
-            <Kuisioner
-              stateSoalKuisioner={soalKuisioner}
-              updateJawaban={updateJawaban}
-              stateSetSoalKuisioner={setSoalKuisioner}
-              stateBtn={btn1}
-              kirim={kirim}
-              nextStateLevel={setSoalKuisioner2}
-              level="1"
-              stateSetBtn={setBtn1}
-            />
+                        <button
+                          className="btnSimpan"
+                          style={{
+                            opacity: data.jawaban == "Tidak" ? 1 : 0.5,
+                          }}
+                          onClick={() =>
+                            _handleJawabanChange(data.id_kuisioner, "Tidak")
+                          }
+                        >
+                          Tidak
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {jmlJawaban == pertanyaan.length && (
+                <button className="btnTambah" onClick={() => kirimJawaban()}>
+                  Kirim
+                </button>
+              )}
+            </>
           )}
-          {soalKuisioner2 && (
-            <Kuisioner
-              stateSoalKuisioner={soalKuisioner2}
-              updateJawaban={updateJawaban}
-              stateSetSoalKuisioner={setSoalKuisioner2}
-              stateBtn={btn2}
-              kirim={kirim}
-              nextStateLevel={setSoalKuisioner3}
-              level="2"
-              stateSetBtn={setBtn2}
-            />
-          )}
-          {soalKuisioner3 && (
-            <Kuisioner
-              stateSoalKuisioner={soalKuisioner3}
-              updateJawaban={updateJawaban}
-              stateSetSoalKuisioner={setSoalKuisioner3}
-              stateBtn={btn3}
-              kirim={kirim}
-              nextStateLevel={setSoalKuisioner4}
-              level="3"
-              stateSetBtn={setBtn3}
-            />
-          )}
-          {soalKuisioner4 && (
-            <Kuisioner
-              stateSoalKuisioner={soalKuisioner4}
-              updateJawaban={updateJawaban}
-              stateSetSoalKuisioner={setSoalKuisioner4}
-              stateBtn={btn4}
-              kirim={kirim}
-              nextStateLevel={setSoalKuisioner5}
-              level="4"
-              stateSetBtn={setBtn4}
-            />
-          )}
-          {soalKuisioner5 && (
-            <Kuisioner
-              stateSoalKuisioner={soalKuisioner5}
-              updateJawaban={updateJawaban}
-              stateSetSoalKuisioner={setSoalKuisioner5}
-              stateBtn={btn5}
-              kirim={kirim}
-              nextStateLevel={setSoalKuisioner6}
-              level="5"
-              stateSetBtn={setBtn5}
-            />
-          )}
-        </>
-      )}
-      {isFinish && (
-        <button
-          className="btnSimpan"
-          onClick={() => {
-            setIsFinish(false);
-            setSoalKuisioner(undefined);
-            setSoalKuisioner2(undefined);
-            setSoalKuisioner3(undefined);
-            setSoalKuisioner4(undefined);
-            setSoalKuisioner5(undefined);
-            setSoalKuisioner6(undefined);
-            setBtn1(false);
-            setBtn2(false);
-            setBtn3(false);
-            setBtn4(false);
-            setBtn5(false);
-            setIdIndikator(undefined);
-            $(`#${idIndikator}`).hide();
-            alert("Pilih indikator berikutnya");
-            window.scrollTo({
-              top: 200,
-              behavior: "smooth", // Memberikan animasi gulir yang halus
-            });
-          }}
-        >
-          Selesai
-        </button>
+        </div>
       )}
     </>
   );
 };
-
 export default PilihDomain;

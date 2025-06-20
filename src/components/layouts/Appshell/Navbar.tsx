@@ -29,9 +29,7 @@ const Navbar: React.FC<ItemProps> = ({ isSidebarOpen, setSidebarOpen }) => {
       {/* Kanan: Bell dan User Icon */}
       <div className="flex ">
         <FiBell size={24} className="mr-4" />
-        <div className="mr-4 ">
-          <p>User</p>
-        </div>
+
         <FaRegUserCircle size={24} />
       </div>
     </nav>

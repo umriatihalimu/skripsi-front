@@ -17,9 +17,13 @@ const Item: React.FC<ItemProps> = ({ isSidebarOpen }) => {
     typeof window != "undefined" ? window.location.href.split("/") : "rtt";
 
   const [menu, setMenu] = useState("");
+  const [user, setUser] = useState<string>("");
+
   useEffect(() => {
     if (typeof url[3] != "undefined") {
       setMenu(url[3]);
+      const userData = localStorage.getItem("user");
+      setUser(userData || "");
     }
   }, [url]);
   return (
@@ -28,44 +32,76 @@ const Item: React.FC<ItemProps> = ({ isSidebarOpen }) => {
         isSidebarOpen ? "block" : "hidden"
       }`}
     >
-      <Sidebar isSidebarOpen>
-        <SidebarItem
-          href="/dashboard"
-          icon={<MdOutlineDashboard size={22} />}
-          text="Dashboard"
-          active={menu === "dashboard" && true}
-        />
-        <SidebarItem
-          href="/domain"
-          icon={<MdOutlineDashboard size={22} />}
-          text="Domain"
-          active={menu === "domain" && true}
-        />
-        <SidebarItem
-          href="/aspek"
-          icon={<CiDatabase size={22} />}
-          text="Aspek"
-          active={menu === "aspek" && true}
-        />
-        <SidebarItem
-          href="/indikator"
-          icon={<CiDatabase size={22} />}
-          text="Indikator"
-          active={menu === "indikator" && true}
-        />
-        <SidebarItem
-          href="/cobit"
-          icon={<CiDatabase size={22} />}
-          text="COBIT 5"
-          active={menu === "cobit" && true}
-        />
-        <SidebarItem
-          href="/penilaian"
-          icon={<MdOutlineAssessment size={22} />}
-          text="Laporan Penilaian"
-          active={menu === "penilaian" && true}
-        />
-      </Sidebar>
+      {user == "user" && (
+        <Sidebar isSidebarOpen>
+          <SidebarItem
+            href="/dashboard"
+            icon={<MdOutlineDashboard size={22} />}
+            text="Dashboard"
+            active={menu === "dashboard" && true}
+          />
+
+          <SidebarItem
+            href="/cobit"
+            icon={<CiDatabase size={22} />}
+            text="COBIT 5"
+            active={menu === "cobit" && true}
+          />
+          <SidebarItem
+            href="/penilaian"
+            icon={<MdOutlineAssessment size={22} />}
+            text="Laporan Penilaian"
+            active={menu === "penilaian" && true}
+          />
+        </Sidebar>
+      )}
+
+      {user == "admin" && (
+        <Sidebar isSidebarOpen>
+          <SidebarItem
+            href="/dashboard"
+            icon={<MdOutlineDashboard size={22} />}
+            text="Dashboard"
+            active={menu === "dashboard" && true}
+          />
+          <SidebarItem
+            href="/domain"
+            icon={<MdOutlineDashboard size={22} />}
+            text="Domain"
+            active={menu === "domain" && true}
+          />
+          <SidebarItem
+            href="/aspek"
+            icon={<CiDatabase size={22} />}
+            text="Aspek"
+            active={menu === "aspek" && true}
+          />
+          <SidebarItem
+            href="/indikator"
+            icon={<CiDatabase size={22} />}
+            text="Indikator"
+            active={menu === "indikator" && true}
+          />
+          <SidebarItem
+            href="/cobit"
+            icon={<CiDatabase size={22} />}
+            text="COBIT 5"
+            active={menu === "cobit" && true}
+          />
+          <SidebarItem
+            href="/penilaian"
+            icon={<MdOutlineAssessment size={22} />}
+            text="Laporan Penilaian"
+            active={menu === "penilaian" && true}
+          />
+          <SidebarItem
+            href="/user"
+            icon={<MdOutlineAssessment size={22} />}
+            text="User"
+            active={menu === "user" && true}
+          />
+        </Sidebar>
+      )}
     </div>
   );
 };

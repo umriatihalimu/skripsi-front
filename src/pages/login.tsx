@@ -19,9 +19,11 @@ const Login = () => {
       .then((res: AxiosResponse<any, any>) => {
         if (res.data.status == "login_gagal") {
           alert("password/username salah");
-        } else if (res.data.status == "login_berhasil") {
-          Cookies.set("cobit_token", res.data.token, { expires: 23 / 24 });
+        } else if (res.data.status == "login_sukses") {
+          Cookies.set("cobit_token", res.data.token, { expires: 1 });
           localStorage.setItem("token", res.data.token);
+          localStorage.setItem("user", res.data.user);
+
           alert("login berhasil");
           router.push("/dashboard");
         }
