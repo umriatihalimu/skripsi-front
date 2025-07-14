@@ -1,33 +1,33 @@
-import axiosCostume from "@/axiosCostume";
-import { itJawabKuisioner, itPenguji } from "@/typeData/itIndikator";
-import { itSkor } from "@/typeData/itPenilaian";
-import { url } from "@/util/env";
-import { AxiosResponse } from "axios";
-import React, { useEffect, useState } from "react";
+import axiosCostume from '@/axiosCostume'
+import { itJawabKuisioner, itPenguji } from '@/typeData/itIndikator'
+import { itSkor } from '@/typeData/itPenilaian'
+import { url } from '@/util/env'
+import { AxiosResponse } from 'axios'
+import React, { useEffect, useState } from 'react'
 
 const LihatHasilUji = () => {
-  const [skor, setSkor] = useState<itSkor[]>([]);
-  const [penguji, setPenguji] = useState<itPenguji>();
+  const [skor, setSkor] = useState<itSkor[]>([])
+  const [penguji, setPenguji] = useState<itPenguji>()
 
   const id =
-    typeof window != "undefined" ? window.location.pathname.split("/") : "";
+    typeof window != 'undefined' ? window.location.pathname.split('/') : ''
 
   const loadKuisioner = () => {
     axiosCostume
       .get(`${url}penguji/skor/${id[2]}`)
       .then((res: AxiosResponse<any, any>) => {
-        setSkor(res.data.data.skor);
-        setPenguji(res.data.data.penguji);
-      });
-  };
+        setSkor(res.data.data.skor)
+        setPenguji(res.data.data.penguji)
+      })
+  }
 
   useEffect(() => {
-    loadKuisioner();
-  }, []);
+    loadKuisioner()
+  }, [])
 
   return (
     <>
-      <div className="overflow-x-auto">
+      <div className='overflow-x-auto'>
         <div>
           <p>Nama : {penguji?.nama_penguji}</p>
           <p>Jabatan : {penguji?.jabatan}</p>
@@ -39,7 +39,7 @@ const LihatHasilUji = () => {
           <>
             <br />
 
-            <table className="table">
+            <table className='table'>
               {/* head */}
               <thead>
                 <tr>
@@ -57,6 +57,17 @@ const LihatHasilUji = () => {
                     <td>{soal.level}</td>
                     <td>{soal.soal}</td>
                     <td>{soal.jawaban}</td>
+                    <td>
+                      <a
+                        href={
+                          process.env.NEXT_PUBLIC_URL +
+                          'upload/' +
+                          soal.nama_file
+                        }
+                      >
+                        Lihat
+                      </a>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -65,10 +76,10 @@ const LihatHasilUji = () => {
         ))}
       </div>
     </>
-  );
-};
+  )
+}
 
-export default LihatHasilUji;
+export default LihatHasilUji
 
 // {skor.map((data, i) => (
 //   <>

@@ -16,5 +16,6 @@ export type itIndikatorPenilaian = {
     level: number;
     soal: string;
     jawaban: string;
+    nama_file: string;
   }[];
 };
