@@ -3,7 +3,7 @@ import { IoFolderOutline } from "react-icons/io5";
 import { IoIosArrowRoundForward } from "react-icons/io";
 import { useRouter } from "next/router";
 
-const DashboardPage = () => {
+const DashboardUser = () => {
   const router = useRouter();
   return (
     <div className="flex flex-row">
@@ -22,7 +22,7 @@ const DashboardPage = () => {
               <IoFolderOutline size={90} className="opacity-40" />
             </div>
             <button
-              onClick={() => router.push("/domain")}
+              onClick={() => router.push("/domain-user")}
               className="flex items-center justify-center p-1 gap-2 mt-[13px] bg-blue-500 text-[13px] hover:bg-blue-600 text-white"
             >
               Selengkapnya
@@ -35,7 +35,7 @@ const DashboardPage = () => {
               <IoFolderOutline size={90} className="opacity-40" />
             </div>
             <button
-              onClick={() => router.push("/aspek")}
+              onClick={() => router.push("/aspek-user")}
               className="flex items-center justify-center p-1 gap-2 mt-[13px] bg-green-500 text-[13px] hover:bg-green-600 text-white"
             >
               Selengkapnya
@@ -48,7 +48,7 @@ const DashboardPage = () => {
               <IoFolderOutline size={90} className="opacity-40" />
             </div>
             <button
-              onClick={() => router.push("/indikator")}
+              onClick={() => router.push("/indikator-user")}
               className="flex items-center justify-center p-1 gap-2 mt-[13px] bg-pink-500 text-[13px] hover:bg-pink-600 text-white"
             >
               Selengkapnya
@@ -234,4 +234,4 @@ const DashboardPage = () => {
   );
 };
 
-export default DashboardPage;
+export default DashboardUser;

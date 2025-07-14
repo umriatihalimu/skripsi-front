@@ -8,6 +8,10 @@ export type itDomainSpbe = {
   nama_spbe: string;
 };
 
+export type FileMap = {
+  [id_indikator: number]: File | null;
+};
+
 export type itDomain = {
   id_domain: number;
   domain: string;

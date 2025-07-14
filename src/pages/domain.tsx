@@ -1,6 +1,6 @@
 import { itDomain } from "@/typeData/itIndikator";
 import { url } from "@/util/env";
-import axios, { AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import React, { useEffect, useState } from "react";
 import { MdOutlineDelete } from "react-icons/md";
 import { IoAdd } from "react-icons/io5";

@@ -1,8 +1,14 @@
 import axiosCostume from "@/axiosCostume";
-import { itAspek, itDomain, itIndikator } from "@/typeData/itIndikator";
+import {
+  FileMap,
+  itAspek,
+  itDomain,
+  itIndikator,
+} from "@/typeData/itIndikator";
 import { itPertanyaan } from "@/typeData/itPertanyaan";
 import { url } from "@/util/env";
 import { AxiosResponse } from "axios";
+import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 
 const PilihDomain = () => {
@@ -24,9 +30,9 @@ const PilihDomain = () => {
   const [jabatanLocal, setJabatanLocal] = useState<string>("");
   const [keteranganLocal, setKeteranganLocal] = useState<string>("");
   const [tglUjiLocal, setTglUjiLocal] = useState<string>("");
-
   const [isSimpanForm, setSimpanForm] = useState<boolean>(false);
   const [isReload, setReload] = useState<number>(1);
+  const [fileState, setFileState] = useState<FileMap>({});
 
   const _getDomain = () => {
     axiosCostume.get(url + "domain").then((res) => {
@@ -70,12 +76,17 @@ const PilihDomain = () => {
   };
 
   const kirimJawaban = () => {
+    const formData = new FormData();
+    formData.append("file_upload", fileState || "");
+    formData.append("data", JSON.stringify(pertanyaan || []));
+    formData.append("id_penguji", localStorage.getItem("idPenguji") || "");
+    formData.append("id_domain", selectDomain?.toString() || "");
+    formData.append("id_aspek", selectAspek?.toString() || "");
     axiosCostume
-      .post(url + `pertanyaan?level=${level}`, {
-        data: pertanyaan,
-        id_penguji: localStorage.getItem("idPenguji"),
-        id_domain: selectDomain,
-        id_aspek: selectAspek,
+      .post(url + `pertanyaan?level=${level}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       })
       .then((res) => {
         alert(`Nilai indikator = ${res.data.hasil}`);
@@ -91,7 +102,7 @@ const PilihDomain = () => {
           alert(
             `Karena nilai kurang dari 85, maka tidak dapat lanjut ke level berikutnya. Silahkan pilih indikator berikutnya`
           );
-          setLevel(1);
+
           setPertanyaan([]);
         }
       });
@@ -113,9 +124,8 @@ const PilihDomain = () => {
     setJmlJawaban(jmlJawab);
   };
 
-  const _simpanDataUji = (e: FormEvent) => {
+  const _simpanDataUji = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     axiosCostume
       .post(url + "pertanyaan/simpan-data-penguji", {
         nama_penguji: namaPenguji,
@@ -130,6 +140,7 @@ const PilihDomain = () => {
         localStorage.setItem("jabatan", jabatan);
         localStorage.setItem("keterangan", keterangan);
         localStorage.setItem("tanggal_uji", tglUji);
+        setReload((prev) => prev + 1);
         //console.log(res.data.data);
       });
   };
@@ -188,7 +199,6 @@ const PilihDomain = () => {
               </tbody>
             </table>
             <div className="flex flex-col  pt-3 gap-2 items-center justify-center">
-              <h3>Tambah data baru</h3>
               <button
                 className="btnTambah"
                 onClick={() => {
@@ -203,7 +213,7 @@ const PilihDomain = () => {
                   setReload(new Date().getDate());
                 }}
               >
-                Tambah
+                Tambah data penguji
               </button>
             </div>
           </div>
@@ -340,7 +350,10 @@ const PilihDomain = () => {
                       }}
                       onClick={() => {
                         setSelectIndikator(dataInd.id_indikator);
-                        _getPertanyaan(dataInd.id_indikator);
+                        setLevel(1);
+                        setTimeout(() => {
+                          _getPertanyaan(dataInd.id_indikator);
+                        }, 1000);
                       }}
                     >
                       {dataInd.nama_indikator}
@@ -365,6 +378,7 @@ const PilihDomain = () => {
                     <th>No</th>
                     <th>Pertanyaan</th>
                     <th>Jawaban</th>
+                    <th>File dukung</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -395,6 +409,21 @@ const PilihDomain = () => {
                         >
                           Tidak
                         </button>
+                      </td>
+                      <td>
+                        <input
+                          type="file"
+                          accept=".pdf,.doc,.docx"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              setFileState((prev) => ({
+                                ...prev,
+                                [data.id_indikator]: file,
+                              }));
+                            }
+                          }}
+                        />
                       </td>
                     </tr>
                   ))}

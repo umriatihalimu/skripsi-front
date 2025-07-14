@@ -35,12 +35,29 @@ const Item: React.FC<ItemProps> = ({ isSidebarOpen }) => {
       {user == "user" && (
         <Sidebar isSidebarOpen>
           <SidebarItem
-            href="/dashboard"
+            href="/dashboard-user"
             icon={<MdOutlineDashboard size={22} />}
             text="Dashboard"
             active={menu === "dashboard" && true}
           />
-
+          <SidebarItem
+            href="/domain-user"
+            icon={<MdOutlineDashboard size={22} />}
+            text="Domain"
+            active={menu === "domain" && true}
+          />
+          <SidebarItem
+            href="/aspek-user"
+            icon={<CiDatabase size={22} />}
+            text="Aspek"
+            active={menu === "aspek" && true}
+          />
+          <SidebarItem
+            href="/indikator-user"
+            icon={<CiDatabase size={22} />}
+            text="Indikator"
+            active={menu === "indikator" && true}
+          />
           <SidebarItem
             href="/cobit"
             icon={<CiDatabase size={22} />}
